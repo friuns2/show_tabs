@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="jQuery 1.0." type="javaScript">
+    <properties>
+      <option name="frameworkName" value="jQuery" />
+      <option name="frameworkVersion" value="1.0." />
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/libs/angular.min.js" />
+      <root url="file://$PROJECT_DIR$/libs/jquery-3.1.0.js" />
+      <root url="file://$PROJECT_DIR$/libs/jquery.loadTemplate-1.4.4.js" />
+      <root url="file://$PROJECT_DIR$/libs/jquery-sortable.js" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>

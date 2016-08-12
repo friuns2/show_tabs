@@ -1,0 +1,41 @@
+﻿<html ng-app="my">
+<head>
+    <script src="Scripts/angular.js"></script>
+    <script src="tabs.js"></script>
+    <script src="ext.js"></script>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="tabulator.css">
+</head>
+<body>
+
+<div ng-controller="TodoCtrl">
+    <div id="container">
+        <header>
+            <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
+        </header>
+        <div id="groups">
+            <div class="group" ng-repeat="window in windows track by $index">
+                <div class="group-title"><span class="delete-link"></span><span class="group-amount">{{window.tabs.length}} Tabs</span>
+                    <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
+                        <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
+                        <span class="restore-all" ng-click="RemoveWindow(window)">Remove Window</span>
+                    </a>
+                    <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
+
+                </div>
+                <ul>
+                    <li ng-repeat="tab in window.tabs">
+                        <span class="delete-link" ng-click="removeTab(tab)"></span><img src="{{tab.favIconUrl||'https://www.google.com/images/icons/product/ebooks-16.png'}}" height="16" width="16">
+                        <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <footer role="contentinfo">
+            The source code for Tabulator is available at
+            <a href="https://github.com/Greduan/chrome-ext-tabulator">GitHub</a>.
+        </footer>
+    </div>
+</div>
+</body>
+</html>
