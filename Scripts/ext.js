@@ -1,3 +1,7 @@
-/**
- * Created by Igor on 13/08/2016.
- */
+function Remove(arr, item) {
+    for (var i = arr.length; i--;) {
+        if (arr[i] === item) {
+            arr.splice(i, 1);
+        }
+    }
+}
