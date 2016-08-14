@@ -2,64 +2,6 @@
 angular.module('my', ['ui.tree']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
         storage = chrome.storage.local;
-        $scope.tree2 = [{
-            'id': 1,
-            'title': 'tree1 - item1',
-            'nodes': [{
-                'id': 1,
-                'title': 'tree1 - item1',
-                'nodes': []
-            }]
-        }, {
-            'id': 2,
-            'title': 'tree1 - item2',
-            'nodes': []
-        }, {
-            'id': 3,
-            'title': 'tree1 - item3',
-            'nodes': []
-        }, {
-            'id': 4,
-            'title': 'tree1 - item4',
-            'nodes': []
-        }];
-        $scope.tree3 = [{
-            'id': 1,
-            'title': 'tree2 - item1',
-            'nodes': []
-        }, {
-            'id': 2,
-            'title': 'tree2 - item2',
-            'nodes': []
-        }, {
-            'id': 3,
-            'title': 'tree2 - item3',
-            'nodes': []
-        }, {
-            'id': 4,
-            'title': 'tree2 - item4',
-            'nodes': []
-        }];
-
-        $scope.remove = function (scope) {
-            scope.remove();
-        };
-
-        $scope.toggle = function (scope) {
-            scope.toggle();
-        };
-
-        $scope.newSubItem = function (scope) {
-            var nodeData = scope.$modelValue;
-            nodeData.nodes.push({
-                id: nodeData.id * 10 + nodeData.nodes.length,
-                title: nodeData.title + '.' + (nodeData.nodes.length + 1),
-                nodes: []
-            });
-        }
-        $scope.GetIcon = function (tab) {
-            return  tab.favIconUrl && tab.favIconUrl.startsWith("http")?  tab.favIconUrl :'https://www.google.com/images/icons/product/ebooks-16.png';
-        };
         getTabs();
         chrome.tabs.onRemoved.addListener(function (tabid) {
             var tab = Enumerable.From($scope.windows).SelectMany(function (a) { return a.tabs;}).First(function (a) {return a.id == tabid;});
@@ -67,15 +9,42 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             if(!tab.url.startsWith("chrome-extension") && !skipSave && !$scope.savedWindows[0].tabs.contains(tab,function (a, b) { return a.url == b.url;})) {
                 $scope.savedWindows[0].tabs.push(clone(tab));
                 storage.set({windows: $scope.savedWindows});
+                skipSave =false;
             }
-            skipSave =false;
             //$scope.closedWindows.push();
             getTabs();
         })
         chrome.tabs.onUpdated.addListener(function (tab) {
             getTabs();
         })
-        $scope.removeTab = function (tab) {
+        $scope.toggle2 = function (scope,window) {
+            window.collapsed = !window.collapsed;
+            //scope.toggle();
+            Save();
+        };
+        $scope.treeOptions = {
+
+            beforeDrop : function (e) {
+
+                var a = e.source.nodeScope.$modelValue;
+                var b = e.dest.nodesScope.$parent.$modelValue;
+                if(a && b) {
+                    if (a.windowId && b.tabs) {
+                        b.tabs.push(clone(a));
+                        console.log("push");
+                    }
+                    Save();
+                    getTabs();
+                }
+                return false;
+            }
+        }
+
+        $scope.GetIcon = function (tab) {
+            return  tab.favIconUrl && tab.favIconUrl.startsWith("http")?  tab.favIconUrl :'https://www.google.com/images/icons/product/ebooks-16.png';
+        };
+
+        $scope.CloseTab = function (tab) {
 
             if (tab.id)
                 chrome.tabs.remove(tab.id);
@@ -86,7 +55,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                 })
         };
 
-        $scope.selectTab = function (tab) {
+        $scope.SelectTab = function (tab) {
 
             if (!tab.id) {
                 chrome.tabs.create({url: tab.url})
@@ -100,7 +69,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             }
         }
 
-        $scope.RemoveWindow = function (window) {
+        $scope.CloseWindow = function (window) {
             if(window.id)
                 chrome.windows.remove(window.id);
             else
@@ -130,14 +99,13 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
 
         function clone(tab) {
-            return {favIconUrl: tab.favIconUrl, title: tab.title, url: tab.url};
+            return {favIconUrl: tab.favIconUrl, title: tab.title, url: tab.url, rand: Math.floor((Math.random() * 100) + 1)};
         }
         var promise;
         function getTabs() {
 
             $timeout.cancel(promise);
             promise = $timeout(function () {
-                console.log($scope.savedWindows)
                 chrome.windows.getAll({populate: true}, function (windows) {
                     $scope.windows = windows;
 
@@ -145,7 +113,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                         $scope.savedWindows = storage.windows||[];
                         if(!$scope.savedWindows[0])
                             $scope.savedWindows[0] = {tabs:[]};
-                        $scope.savedWindows[0].name ="trash";
+                        $scope.savedWindows[0].name ="closed";
                         Refresh();
                     });
                 });
@@ -157,7 +125,12 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
 
         function RemoveWindow(win) {
-            AddWindow(win, true);
+            if($scope.savedWindows.indexOf(win) == 0)
+                win.tabs = [];
+            else
+                Remove($scope.savedWindows, win);
+            Save();
+            getTabs();
         }
 
         function Save() {
@@ -165,13 +138,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
 
         function AddWindow(win, remove) {
-            if (remove) {
-                Remove($scope.savedWindows, win);
-
-                console.log("remove")
-            }
-            else
-                $scope.savedWindows.push(win);
+            $scope.savedWindows.push(win);
             Save();
             getTabs();
         }

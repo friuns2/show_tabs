@@ -17,54 +17,36 @@
 
 <div ng-controller="TodoCtrl">
 
-    <script type="text/ng-template" id="nodes_renderer1.html">
-        <div ui-tree-handle class="tree-node tree-node-content">
-            {{node.title}}
-        </div>
-        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
-        </ol>
-    </script>
 
-    <div class="row" ng-repeat="tree in [tree2,tree3]">
-        <div class="col-sm-6">
-            <h3>Tree 1</h3>
-            <div>
-                <ol ui-tree ui-tree-nodes="" ng-model="tree">
-                    <li ng-repeat="node in tree" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
-                </ol>
-            </div>
-        </div>
-    </div>
     <div id="container">
         <header>
             <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
         </header>
 
         <script type="text/ng-template" id="windowsTemplate">
-            <div id="groups" ui-tree ui-tree-nodes="" ng-model="windows">
-                <div class="group" ng-repeat="window in windows track by $index">
+            <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows" >
+                <div class="group" ng-repeat="window in windows">
 
-                    <div class="group-title" ui-tree-node>
-                        <span class="delete-link" ng-click="RemoveWindow(window)"></span><span class="group-amount">{{window.tabs.length}} {{window.name||'Tabs'}}</span>
+                    <div class="group-title" ui-tree-node >
+
+                        <span class="delete-link" ng-click="CloseWindow(window)"></span><span class="group-amount">{{window.tabs.length}} {{window.name||'Tabs'}}</span>
                         <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
                             <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
                         </a>
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
-                        <div ui-tree >
-                            <ul ui-tree-nodes="" ng-model="window.tabs">
-                                <li ng-repeat="tab in window.tabs" ui-tree-node class="block-with-text">
-                                    <span class="delete-link" ng-click="removeTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
-                                    <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
-                                </li>
-                            </ul>
-                        </div>
+                        <a ng-click="toggle2(this,window)" class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': window.collapsed, 'glyphicon-chevron-down': !window.collapsed}"></span></a>
+                        <ul ui-tree-nodes="" ng-model="window.tabs" ng-hide="window.collapsed">
+                            <li ng-repeat="tab in window.tabs" ui-tree-node class="block-with-text">
+                                <span class="delete-link" ng-click="CloseTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
+                                <span class="link" ng-click="SelectTab(tab)">{{tab.title}}</span>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
             </div>
         </script>
-        <table class="table">
+        <table class="table table-bordered ">
 
             <tr>
                 <th>
