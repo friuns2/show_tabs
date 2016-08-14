@@ -1,12 +1,72 @@
 ﻿
 angular.module('my', ['ui.tree']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
+        storage = chrome.storage.local;
+        $scope.tree2 = [{
+            'id': 1,
+            'title': 'tree1 - item1',
+            'nodes': [{
+                'id': 1,
+                'title': 'tree1 - item1',
+                'nodes': []
+            }]
+        }, {
+            'id': 2,
+            'title': 'tree1 - item2',
+            'nodes': []
+        }, {
+            'id': 3,
+            'title': 'tree1 - item3',
+            'nodes': []
+        }, {
+            'id': 4,
+            'title': 'tree1 - item4',
+            'nodes': []
+        }];
+        $scope.tree3 = [{
+            'id': 1,
+            'title': 'tree2 - item1',
+            'nodes': []
+        }, {
+            'id': 2,
+            'title': 'tree2 - item2',
+            'nodes': []
+        }, {
+            'id': 3,
+            'title': 'tree2 - item3',
+            'nodes': []
+        }, {
+            'id': 4,
+            'title': 'tree2 - item4',
+            'nodes': []
+        }];
+
+        $scope.remove = function (scope) {
+            scope.remove();
+        };
+
+        $scope.toggle = function (scope) {
+            scope.toggle();
+        };
+
+        $scope.newSubItem = function (scope) {
+            var nodeData = scope.$modelValue;
+            nodeData.nodes.push({
+                id: nodeData.id * 10 + nodeData.nodes.length,
+                title: nodeData.title + '.' + (nodeData.nodes.length + 1),
+                nodes: []
+            });
+        }
+        $scope.GetIcon = function (tab) {
+            return tab.favIconUrl||'https://www.google.com/images/icons/product/ebooks-16.png';
+        };
         getTabs();
         chrome.tabs.onRemoved.addListener(function (tabid) {
             var tab = Enumerable.From($scope.windows).SelectMany(function (a) { return a.tabs;}).First(function (a) {return a.id == tabid;});
-            if(!tab.url.startsWith("chrome-extension") && !skipSave) {
+
+            if(!tab.url.startsWith("chrome-extension") && !skipSave && !$scope.savedWindows[0].tabs.contains(tab,function (a, b) { return a.url == b.url;})) {
                 $scope.savedWindows[0].tabs.push(clone(tab));
-                chrome.storage.sync.set({windows: $scope.savedWindows});
+                storage.set({windows: $scope.savedWindows});
             }
             skipSave =false;
             //$scope.closedWindows.push();
@@ -22,6 +82,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             else
                 $scope.savedWindows.forEach(function (win) {
                     Remove(win.tabs, tab);
+                    Save();
                 })
         };
 
@@ -56,9 +117,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
         var skipSave;
         $scope.SaveWindow = function (window) {
-            var windows = [];
             win = {tabs: [], date: new Date().toISOString().slice(0, 20)};
-
             window.tabs.forEach(function (tab) {
                 if (!tab.url.startsWith("chrome-extension")) {
                     skipSave=true;
@@ -66,7 +125,6 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                     win.tabs.push(clone(tab));
                 }
             });
-
             AddWindow(win);
 
         }
@@ -83,8 +141,8 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                 chrome.windows.getAll({populate: true}, function (windows) {
                     $scope.windows = windows;
 
-                    chrome.storage.sync.get('windows', function (storage) {
-                        $scope.savedWindows = storage.windows;
+                    storage.get('windows', function (storage) {
+                        $scope.savedWindows = storage.windows||[];
                         if(!$scope.savedWindows[0])
                             $scope.savedWindows[0] = {tabs:[]};
                         $scope.savedWindows[0].name ="trash";
@@ -102,17 +160,20 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             AddWindow(win, true);
         }
 
+        function Save() {
+            storage.set({windows: $scope.savedWindows});
+        }
+
         function AddWindow(win, remove) {
             if (remove) {
                 Remove($scope.savedWindows, win);
+
                 console.log("remove")
             }
             else
                 $scope.savedWindows.push(win);
-            chrome.storage.sync.set({windows: $scope.savedWindows}, function () {
-                console.log(savedWindows);
-                getTabs()
-            });
+            Save();
+            getTabs();
         }
 
 

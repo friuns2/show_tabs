@@ -4,41 +4,75 @@
     <script src="tabs.js"></script>
     <script src="Scripts/ext.js"></script>
     <script src="Scripts/linq.js"></script>
-    <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
-    <link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.css">
+    <script src="Scripts/LINQ_JS.js"></script>
+    <script src="Scripts/ui-tree/angular-ui-tree.js"></script>
+
+    <link rel="stylesheet" href="Scripts/ui-tree/angular-ui-tree.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="tabulator.css">
+    <link rel="stylesheet" href="Scripts/bootstrap.min.css">
+
 </head>
 <body>
 
 <div ng-controller="TodoCtrl">
-    <div ui-grid="gridOptions" class="grid" ui-grid-draggable-rows></div>
+
+    <script type="text/ng-template" id="nodes_renderer1.html">
+        <div ui-tree-handle class="tree-node tree-node-content">
+            {{node.title}}
+        </div>
+        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+        </ol>
+    </script>
+
+    <div class="row" ng-repeat="tree in [tree2,tree3]">
+        <div class="col-sm-6">
+            <h3>Tree 1</h3>
+            <div ui-tree id="tree-root">
+                <ol ui-tree-nodes="" ng-model="tree">
+                    <li ng-repeat="node in tree" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+                </ol>
+            </div>
+        </div>
+    </div>
     <div id="container">
         <header>
             <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
         </header>
         <script type="text/ng-template" id="windowsTemplate">
-        <div id="groups">
-            {{windows2}}
-            <div class="group" ng-repeat="window in windows track by $index" >
-                <div class="group-title"><span class="delete-link" ng-click="RemoveWindow(window)"></span><span class="group-amount">{{window.tabs.length}} {{window.name||'Tabs'}}</span>
-                    <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
-                        <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
-                    </a>
-                    <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
+            <div id="groups">
+                {{windows2}}
+                <div class="group" ng-repeat="window in windows track by $index">
+                    <div class="group-title">
+                        <span class="delete-link" ng-click="RemoveWindow(window)"></span><span class="group-amount">{{window.tabs.length}} {{window.name||'Tabs'}}</span>
+                        <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
+                            <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
+                        </a>
+                        <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
 
+                    </div>
+                    <ul>
+                        <li ng-repeat="tab in window.tabs track by $index" class="block-with-text">
+                            <span class="delete-link" ng-click="removeTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
+                            <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
+                        </li>
+                    </ul>
                 </div>
-                <ul>
-                    <li ng-repeat="tab in window.tabs track by $index">
-                        <span class="delete-link" ng-click="removeTab(tab)"></span><img src="{{tab.favIconUrl||'https://www.google.com/images/icons/product/ebooks-16.png'}}" height="16" width="16">
-                        <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
-                    </li>
-                </ul>
             </div>
-        </div>
         </script>
-        <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
-        <div ng-include="'windowsTemplate'" ng-repeat="windows in [savedWindows]"></div>
+        <table class="table">
+
+            <tr>
+                <th>
+                    <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
+                </th>
+                <th>
+                    <div ng-include="'windowsTemplate'" ng-repeat="windows in [savedWindows]"></div>
+                </th>
+            </tr>
+        </table>
+
 
         <footer role="contentinfo">
             The source code for Tabulator is available at

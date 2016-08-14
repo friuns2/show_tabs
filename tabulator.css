@@ -8,8 +8,19 @@ body {
 	font-size: 16px;
 	line-height: 1.4;
 }
+th{
+	font-weight: inherit;
 
+}
+
+.block-with-text {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+}
 #container {
+
 	margin: 3%;
 	padding: 5px;
 	font-family: Liberation Sans, sans-serif;
