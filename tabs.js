@@ -1,5 +1,5 @@
 ﻿
-angular.module('my', ['ui.tree']).controller('TodoCtrl',
+angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
         storage = chrome.storage.local;
         getTabs();
