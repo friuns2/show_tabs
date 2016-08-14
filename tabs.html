@@ -29,8 +29,8 @@
     <div class="row" ng-repeat="tree in [tree2,tree3]">
         <div class="col-sm-6">
             <h3>Tree 1</h3>
-            <div ui-tree id="tree-root">
-                <ol ui-tree-nodes="" ng-model="tree">
+            <div>
+                <ol ui-tree ui-tree-nodes="" ng-model="tree">
                     <li ng-repeat="node in tree" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
                 </ol>
             </div>
@@ -40,24 +40,27 @@
         <header>
             <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
         </header>
+
         <script type="text/ng-template" id="windowsTemplate">
-            <div id="groups">
-                {{windows2}}
+            <div id="groups" ui-tree ui-tree-nodes="" ng-model="windows">
                 <div class="group" ng-repeat="window in windows track by $index">
-                    <div class="group-title">
+
+                    <div class="group-title" ui-tree-node>
                         <span class="delete-link" ng-click="RemoveWindow(window)"></span><span class="group-amount">{{window.tabs.length}} {{window.name||'Tabs'}}</span>
                         <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
                             <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
                         </a>
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
-
+                        <div ui-tree >
+                            <ul ui-tree-nodes="" ng-model="window.tabs">
+                                <li ng-repeat="tab in window.tabs" ui-tree-node class="block-with-text">
+                                    <span class="delete-link" ng-click="removeTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
+                                    <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <ul>
-                        <li ng-repeat="tab in window.tabs track by $index" class="block-with-text">
-                            <span class="delete-link" ng-click="removeTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
-                            <span class="link" ng-click="selectTab(tab)">{{tab.title}}</span>
-                        </li>
-                    </ul>
+
                 </div>
             </div>
         </script>

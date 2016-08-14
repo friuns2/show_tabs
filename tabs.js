@@ -58,7 +58,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             });
         }
         $scope.GetIcon = function (tab) {
-            return tab.favIconUrl||'https://www.google.com/images/icons/product/ebooks-16.png';
+            return  tab.favIconUrl && tab.favIconUrl.startsWith("http")?  tab.favIconUrl :'https://www.google.com/images/icons/product/ebooks-16.png';
         };
         getTabs();
         chrome.tabs.onRemoved.addListener(function (tabid) {
