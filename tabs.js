@@ -32,7 +32,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                 var item = e.source.nodeScope.$modelValue;
                 var alist = e.source.nodesScope.$modelValue;
                 var blist = e.dest.nodesScope.$modelValue;
-
+                if(item.recentlyClosed)return; 
                 $scope.savedWindows.savedWindows=true;
                 $scope.savedWindows.forEach(function (a) {
                     a.tabs.savedTabs=true;
@@ -41,8 +41,6 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                 $scope.windows.forEach(function (a) {
                     a.tabs.activeTabs = true;
                 })
-
-
 
                 if (alist.activeWindows) { //draging active window
                     if (blist.savedTabs) {
@@ -55,9 +53,10 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                     if (blist.savedTabs) {
                         blist.splice(e.dest.index,0, clone(item));
                         chrome.tabs.remove(item.id);
+                        
                     }
                 }
-
+                 Save();
                 return alist==blist;
             }
         }
@@ -140,7 +139,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                         $scope.savedWindows = storage.windows||[];
                         if(!$scope.savedWindows[0])
                             $scope.savedWindows[0] = {tabs:[]};
-
+                        $scope.savedWindows[0].recentlyClosed = true;
                         $scope.savedWindows[0].name ="closed";
                         Refresh();
                     });
@@ -169,11 +168,15 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
 
         function AddWindow(win, remove) {
-            $scope.savedWindows.push(win);
+            $scope.savedWindows.splice(0,0,win);
             Save();
             getTabs();
         }
 
 
 
-    });
+    }).filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+});

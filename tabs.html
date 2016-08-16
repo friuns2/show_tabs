@@ -43,7 +43,7 @@
                         <ul ui-tree-nodes="" ng-model="window.tabs" ng-hide="window.collapsed">
                             <li ng-repeat="tab in window.tabs" ui-tree-node class="block-with-text">
                                 <span class="delete-link" ng-click="CloseTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
-                                <span class="link" ng-click="SelectTab(tab)">{{tab.title}}</span>
+                                <span class="link" ng-class="{'bold':tab.active}" ng-click="SelectTab(tab)">{{tab.title}}</span>
                             </li>
                         </ul>
                     </div>
@@ -64,10 +64,7 @@
         </table>
 
 
-        <footer role="contentinfo">
-            The source code for Tabulator is available at
-            <a href="https://github.com/Greduan/chrome-ext-tabulator">GitHub</a>.
-        </footer>
+      
     </div>
 </div>
 </body>

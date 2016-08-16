@@ -15,7 +15,7 @@ th{
 }
 
 .block-with-text {
-	overflow: hidden;
+	overflow: hidden;	
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
@@ -94,6 +94,10 @@ li {
 	color: blue;
 	text-decoration: none;
 	padding: .2em;
+}
+.bold
+{
+	font-weight: bold
 }
 .link:hover {
 	cursor: pointer;
