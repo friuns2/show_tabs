@@ -5,14 +5,12 @@
     <script src="Scripts/ext.js"></script>
     <script src="Scripts/linq.js"></script>
     <script src="Scripts/LINQ_JS.js"></script>
-    <script src="Scripts/angular-xeditable/js/xeditable.js"></script>
     <script src="Scripts/ui-tree/angular-ui-tree.js"></script>
 
     <link rel="stylesheet" href="Scripts/ui-tree/angular-ui-tree.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="tabulator.css">
     <link rel="stylesheet" href="Scripts/bootstrap.min.css">
-    <link rel="stylesheet" href="Scripts/angular-xeditable/css/xeditable.css">
 
 </head>
 <body>
@@ -33,7 +31,10 @@
 
                         <span class="delete-link" ng-click="CloseWindow(window)"></span>
                         <span class="group-amount">{{window.tabs.length}}</span>
-                        <span class="group-amount" editable-text="window.name">{{window.name||'Tabs'}}</span>
+
+                        <span class="group-amount" ng-hide="edit" ng-dblclick="edit=true">{{window.name||'Tabs'}}</span>
+                        <input ng-show="edit" ng-model="window.name" ng-blur="edit=false;Save()" autofocus />
+
                         <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
                             <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
                         </a>

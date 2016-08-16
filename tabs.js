@@ -1,5 +1,5 @@
 ﻿
-angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
+angular.module('my', ['ui.tree']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
         storage = chrome.storage.local;
         getTabs();
@@ -23,20 +23,42 @@ angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
             Save();
         };
         $scope.treeOptions = {
-
+            dropped : function (e) {
+                Save();
+                getTabs();
+            },
             beforeDrop : function (e) {
 
-                var a = e.source.nodeScope.$modelValue;
-                var b = e.dest.nodesScope.$parent.$modelValue;
-                if(a && b) {
-                    if (a.windowId && b.tabs) {
-                        b.tabs.push(clone(a));
-                        console.log("push");
+                var item = e.source.nodeScope.$modelValue;
+                var alist = e.source.nodesScope.$modelValue;
+                var blist = e.dest.nodesScope.$modelValue;
+
+                $scope.savedWindows.savedWindows=true;
+                $scope.savedWindows.forEach(function (a) {
+                    a.tabs.savedTabs=true;
+                })
+                $scope.windows.activeWindows=true;
+                $scope.windows.forEach(function (a) {
+                    a.tabs.activeTabs = true;
+                })
+
+
+
+                if (alist.activeWindows) { //draging active window
+                    if (blist.savedTabs) {
+                        console.log("window to tabs")
+                        $scope.SaveWindow(item, blist, e.dest.index);
                     }
-                    Save();
-                    getTabs();
                 }
-                return false;
+
+                if (alist.activeTabs) {
+                    if (blist.savedTabs) {
+                        blist.splice(e.dest.index,0, clone(item));
+                        chrome.tabs.remove(item.id);
+                    }
+                }
+
+                return alist==blist;
             }
         }
 
@@ -45,7 +67,6 @@ angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
         };
 
         $scope.CloseTab = function (tab) {
-
             if (tab.id)
                 chrome.tabs.remove(tab.id);
             else
@@ -85,21 +106,27 @@ angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
             RemoveWindow(window);
         }
         var skipSave;
-        $scope.SaveWindow = function (window) {
-            win = {tabs: [], date: new Date().toISOString().slice(0, 20)};
+        $scope.SaveWindow = function (window,into,pos) {
+            if(!into)
+                var win = {tabs: [], date: new Date().toISOString().slice(0, 20)};
+
             window.tabs.forEach(function (tab) {
                 if (!tab.url.startsWith("chrome-extension")) {
                     skipSave=true;
                     chrome.tabs.remove(tab.id);
-                    win.tabs.push(clone(tab));
+                    if(into)
+                        into.splice(pos++, 0, clone(tab))
+                    else
+                        win.tabs.push(clone(tab));
+
                 }
             });
-            AddWindow(win);
-
+            if(!into)
+                AddWindow(win);
         }
 
         function clone(tab) {
-            return {favIconUrl: tab.favIconUrl, title: tab.title, url: tab.url, rand: Math.floor((Math.random() * 100) + 1)};
+            return {favIconUrl: tab.favIconUrl, title: tab.title, url: tab.url, rand: Math.floor((Math.random() * 1000) + 1)};
         }
         var promise;
         function getTabs() {
@@ -113,6 +140,7 @@ angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
                         $scope.savedWindows = storage.windows||[];
                         if(!$scope.savedWindows[0])
                             $scope.savedWindows[0] = {tabs:[]};
+
                         $scope.savedWindows[0].name ="closed";
                         Refresh();
                     });
@@ -133,6 +161,9 @@ angular.module('my', ['ui.tree','xeditable']).controller('TodoCtrl',
             getTabs();
         }
 
+        $scope.Save =function() {
+            Save();
+        }
         function Save() {
             storage.set({windows: $scope.savedWindows});
         }
