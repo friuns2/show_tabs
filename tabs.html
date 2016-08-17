@@ -23,6 +23,7 @@
             <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
         </header>
 
+    
         <script type="text/ng-template" id="windowsTemplate">
             <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows" >
                 <div class="group" ng-repeat="window in windows">
@@ -58,7 +59,28 @@
                     <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
                 </th>
                 <th>
-                    <div ng-include="'windowsTemplate'" ng-repeat="windows in [savedWindows]"></div>
+
+                        <script type="text/ng-template" id="nodes_renderer1.html">
+  <div ui-tree-handle class="tree-node tree-node-content">
+    <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+    {{node.title}}
+    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+  </div>
+  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'">
+    </li>
+  </ol>
+  <div ng-include="'windowsTemplate'" ng-repeat="windows in [node.windows]"></div>
+</script>
+<div ui-tree id="tree1-root">
+      <ol ui-tree-nodes="" ng-model="folders2">
+        <li ng-repeat="node in folders2" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+      </ol>
+      
+    </div>
+
+                    
                 </th>
             </tr>
         </table>

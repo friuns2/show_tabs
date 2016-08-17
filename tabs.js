@@ -7,7 +7,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             var tab = Enumerable.From($scope.windows).SelectMany(function (a) { return a.tabs;}).First(function (a) {return a.id == tabid;});
 
             if(!tab.url.startsWith("chrome-extension") && !skipSave && !$scope.savedWindows[0].tabs.contains(tab,function (a, b) { return a.url == b.url;})) {
-                $scope.savedWindows[0].tabs.push(clone(tab));
+                $scope.savedWindows[$scope.savedWindows.length - 1].tabs.push(clone(tab));
                 storage.set({windows: $scope.savedWindows});
                 skipSave =false;
             }
@@ -22,6 +22,13 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             //scope.toggle();
             Save();
         };
+
+         $scope.newSubItem = function (scope) {
+        var nodeData = scope.$modelValue;
+        nodeData.nodes.push({nodes: [],windows:[]});
+      };
+      
+        
         $scope.treeOptions = {
             dropped : function (e) {
                 Save();
@@ -135,18 +142,25 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                 chrome.windows.getAll({populate: true}, function (windows) {
                     $scope.windows = windows;
 
-                    storage.get('windows', function (storage) {
-                        $scope.savedWindows = storage.windows||[];
+                    storage.get('folders', function (storage) {
+                        $scope.folders = storage.folders||{nodes:[],windows:[],title:"default"};
+                        $scope.folders2 = [$scope.folders];
+                        $scope.savedWindows = $scope.folders.windows;
+                        console.log($scope.folders) 
                         if(!$scope.savedWindows[0])
+                        {
                             $scope.savedWindows[0] = {tabs:[]};
-                        $scope.savedWindows[0].recentlyClosed = true;
-                        $scope.savedWindows[0].name ="closed";
+                            $scope.savedWindows[0].recentlyClosed = true;
+                            $scope.savedWindows[0].name ="closed";
+                        }
                         Refresh();
                     });
                 });
             }, 100);
         }
-
+        function Save() {
+            storage.set({folders: $scope.folders});
+        }
         function Refresh() {
             $scope.$apply();
         }
@@ -163,9 +177,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         $scope.Save =function() {
             Save();
         }
-        function Save() {
-            storage.set({windows: $scope.savedWindows});
-        }
+       
 
         function AddWindow(win, remove) {
             $scope.savedWindows.splice(0,0,win);
