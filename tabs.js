@@ -1,6 +1,9 @@
-﻿angular.module('my', ['ui.tree']).controller('TodoCtrl',
-    function ($scope, $timeout, $filter) {
+﻿
 
+var test=2;
+angular.module('my', ['ui.tree']).controller('TodoCtrl',
+    function ($scope, $timeout, $filter) {
+scope= $scope;
         var storage = chrome.storage.local;
         getTabs();
         chrome.tabs.onRemoved.addListener(function (tabid) {

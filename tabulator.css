@@ -12,8 +12,6 @@ body {
 	background-color: #5bc0de;
 }
 th{
-	table-layout: fixed;
-	width:40%;
 	font-weight: inherit;
 
 }
