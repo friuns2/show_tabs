@@ -17,13 +17,19 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         chrome.tabs.onUpdated.addListener(function (tab) {
             getTabs();
         })
-        $scope.toggle2 = function (scope,window) {
-            window.collapsed = !window.collapsed;
+        $scope.toggle2 = function (scope,item) {
+            item.collapsed = !item.collapsed;
             //scope.toggle();
             Save();
         };
+        
+  $scope.remove = function (scope) {
+        scope.remove();
+      };
 
+      
          $scope.newSubItem = function (scope) {
+             console.log(scope);
         var nodeData = scope.$modelValue;
         nodeData.nodes.push({nodes: [],windows:[]});
       };

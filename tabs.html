@@ -23,22 +23,21 @@
             <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
         </header>
 
-    
+
         <script type="text/ng-template" id="windowsTemplate">
-            <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows" >
+            <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows">
                 <div class="group" ng-repeat="window in windows">
 
-                    <div class="group-title" ui-tree-node >
+                    <div class="group-title" ui-tree-node>
 
                         <span class="delete-link" ng-click="CloseWindow(window)"></span>
                         <span class="group-amount">{{window.tabs.length}}</span>
 
                         <span class="group-amount" ng-hide="edit" ng-dblclick="edit=true">{{window.name||'Tabs'}}</span>
-                        <input ng-show="edit" ng-model="window.name" ng-blur="edit=false;Save()" autofocus />
+                        <input ng-show="edit" ng-model="window.name" ng-blur="edit=false;Save()" autofocus/>
 
                         <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
-                            <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span>
-                        </a>
+                            <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span> </a>
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
                         <a ng-click="toggle2(this,window)" class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': window.collapsed, 'glyphicon-chevron-down': !window.collapsed}"></span></a>
                         <ul ui-tree-nodes="" ng-model="window.tabs" ng-hide="window.collapsed">
@@ -60,33 +59,29 @@
                 </th>
                 <th>
 
-                        <script type="text/ng-template" id="nodes_renderer1.html">
-  <div ui-tree-handle class="tree-node tree-node-content">
-    <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-    {{node.title}}
-    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
-  </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'">
-    </li>
-  </ol>
-  <div ng-include="'windowsTemplate'" ng-repeat="windows in [node.windows]"></div>
-</script>
-<div ui-tree id="tree1-root">
-      <ol ui-tree-nodes="" ng-model="folders2">
-        <li ng-repeat="node in folders2" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
-      </ol>
-      
-    </div>
+                    <script type="text/ng-template" id="nodes_renderer1.html">
+                        <div ui-tree-handle class="tree-node tree-node-content">
+                            <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a> {{node.title}}
+                            <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+                            <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+                            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+                        </ol>
+                        <div ng-include="'windowsTemplate'" ng-hide="collapsed" ng-repeat="windows in [node.windows]"></div>
+                    </script>
+                    <div ui-tree id="tree1-root">
+                        <ol ui-tree-nodes="" ng-model="folders2">
+                            <li ng-repeat="node in folders2" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+                        </ol>
+                    </div>
 
-                    
+
                 </th>
             </tr>
         </table>
 
 
-      
     </div>
 </div>
 </body>
