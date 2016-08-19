@@ -1,7 +1,18 @@
 /**
  * Created by Tuomas pc on 19.8.2016.
  */
+treeOptionsFolders =
+{
+    accept: function (sourceNodeScope, destNodesScope, destIndex) {
+        console.log(destNodesScope);
+        return false;
+    }
+}
 treeOptions = {
+    accept: function (sourceNodeScope, destNodesScope, destIndex) {
+
+            return true;
+    },
     dropped: function (e) {
         Save();
         getTabs();
@@ -12,11 +23,12 @@ treeOptions = {
         var alist = e.source.nodesScope.$modelValue;
         var blist = e.dest.nodesScope.$modelValue;
         if (item.recentlyClosed)return;
-        //scope.selectedFolder.windows.folders.windows = true;
+
         scope.selectedFolder.windows.forEach(function (a) {
             a.tabs.savedTabs = true;
         })
         scope.windows.activeWindows = true;
+        scope.selectedFolder.windows.saveWindows = true;
         scope.windows.forEach(function (a) {
             a.tabs.activeTabs = true;
         })
@@ -36,6 +48,6 @@ treeOptions = {
             }
         }
         Save();
-        return alist == blist;
+        return alist == blist|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
     }
 }

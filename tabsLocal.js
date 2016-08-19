@@ -2,15 +2,27 @@
  * Created by Tuomas pc on 19.8.2016.
  */
 function clone(tab) {
-    return {
-        favIconUrl: tab.favIconUrl,
-        title: tab.title,
-        url: tab.url,
-        rand: Math.floor((Math.random() * 1000) + 1)
-    };
+    return TabConstructor(tab);
 }
 
+function random()
+{
+    return Math.floor((Math.random() * 1000) + 1);
+}
 var promise;
+
+function TabConstructor(tab) {
+    tab = tab||{};
+    return {favIconUrl: tab.favIconUrl,
+        title: tab.title,
+        url: tab.url,
+        id: random()};
+}
+function WindowConstructor () {
+    this.tabs = [];
+    this.date = new Date().toISOString().slice(0, 20);
+    this.id = random();
+}
 
 function getTabs() {
 
@@ -52,9 +64,7 @@ function Refresh() {
 }
 
 function RemoveWindow(win) {
-    if (scope.selectedFolder.windows.indexOf(win) == 0)
-        win.tabs = [];
-    else
+
         Remove(scope.selectedFolder.windows, win);
     Save();
     getTabs();

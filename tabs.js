@@ -3,6 +3,7 @@ var storage;
 var scope;
 var timeout;
 var treeOptions;
+var treeOptionsFolders;
 
 angular.module('my', ['ui.tree']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
@@ -12,11 +13,11 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         storage = chrome.storage.local;
         getTabs();
         scope.treeOptions = treeOptions;
+        scope.treeOptionsFolders = treeOptionsFolders;
         scope.selectFolder = function(node)
         {
             console.log(node)
             scope.selectedFolder = node;
-
         }
         scope.toggle2 = function (scope, item) {
             item.collapsed = !item.collapsed;
@@ -54,7 +55,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
 
         scope.SelectTab = function (tab) {
 
-            if (!tab.id) {
+            if (!tab.windowId) { //is saved
                 chrome.tabs.create({url: tab.url})
                 chrome.tabs.getCurrent(function (tab) {
                     chrome.tabs.update(tab.id, {selected: true});
@@ -84,7 +85,7 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
 
         scope.SaveWindow = function (window, into, pos) {
             if (!into)
-                var win = {tabs: [], date: new Date().toISOString().slice(0, 20)};
+                var win = new WindowConstructor();
 
             window.tabs.forEach(function (tab) {
                 if (!tab.url.startsWith("chrome-extension")) {
@@ -107,29 +108,4 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             Save();
         }
 
-    }).directive('script', function() {
-    return {
-        restrict: 'E',
-        scope: false,
-        link: function(scope, elem, attr)
-        {
-            if (attr.type==='text/javascript-lazy')
-            {
-                var s = document.createElement("script");
-                s.type = "text/javascript";
-                var src = elem.attr('src');
-                if(src!==undefined)
-                {
-                    s.src = src;
-                }
-                else
-                {
-                    var code = elem.text();
-                    s.text = code;
-                }
-                document.head.appendChild(s);
-                elem.remove();
-            }
-        }
-    };
-});
+    });

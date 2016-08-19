@@ -15,7 +15,12 @@ th{
 	font-weight: inherit;
 
 }
+.angular-ui-tree-placeholder
+{
+	max-height: 1px;
 
+	background-color: #2e6da4;
+}
 .block-with-text {
 	overflow: hidden;	
 	display: -webkit-box;

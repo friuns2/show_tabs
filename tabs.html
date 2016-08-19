@@ -28,8 +28,8 @@
 
 
         <script type="text/ng-template" id="windowsTemplate">
-            <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows">
-                <div class="group" ng-repeat="window in windows">
+            <div id="groups" ui-tree="treeOptions"  ui-tree-nodes="" ng-model="windows">
+                <div class="group" ng-repeat="window in windows track by window.id">
 
                     <div class="group-title" ui-tree-node>
 
@@ -44,9 +44,11 @@
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
                         <a ng-click="toggle2(this,window)" class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': window.collapsed, 'glyphicon-chevron-down': !window.collapsed}"></span></a>
                         <ul ui-tree-nodes="" ng-model="window.tabs" ng-hide="window.collapsed">
-                            <li ng-repeat="tab in window.tabs" ui-tree-node class="block-with-text">
+                            <li ng-repeat="tab in window.tabs track by tab.id" ui-tree-node class="block-with-text">
                                 <span class="delete-link" ng-click="CloseTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
+                                {{tab.rand}}
                                 <span class="link" ng-class="{'bold':tab.active}" ng-click="SelectTab(tab)">{{tab.title}}</span>
+
                             </li>
                         </ul>
                     </div>
@@ -74,7 +76,7 @@
                             <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
                         </ol>
                     </script>
-                    <div ui-tree id="tree1-root">
+                    <div ui-tree="treeOptionsFolders" id="tree1-root">
                         <ol ui-tree-nodes="" ng-model="folders2">
                             <li ng-repeat="node in folders2" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
                         </ol>
