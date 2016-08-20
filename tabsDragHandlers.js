@@ -1,14 +1,24 @@
 /**
  * Created by Tuomas pc on 19.8.2016.
  */
+
 treeOptionsFolders =
 {
+
     accept: function (sourceNodeScope, destNodesScope, destIndex) {
-        console.log(destNodesScope);
+
         return false;
     }
 }
+
 treeOptions = {
+    dragStart:function (e) {
+        scope.dragging = e.source.nodeScope.$modelValue;
+    },
+    dragStop:function (e) {
+        scope.dragging = null;
+    }
+    ,
     accept: function (sourceNodeScope, destNodesScope, destIndex) {
 
             return true;
@@ -48,6 +58,6 @@ treeOptions = {
             }
         }
         Save();
-        return alist == blist|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
+        return alist == blist;//|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
     }
 }

@@ -11,7 +11,12 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         scope = $scope;
         timeout = $timeout;
         storage = chrome.storage.local;
+        scope.errorCount=0;
         getTabs();
+        scope.mouseEnter = function (e)
+        {
+            scope.folderToDrop = e;
+        }
         scope.treeOptions = treeOptions;
         scope.treeOptionsFolders = treeOptionsFolders;
         scope.selectFolder = function(node)

@@ -21,3 +21,8 @@ chrome.tabs.onRemoved.addListener(function (tabid) {
 chrome.tabs.onUpdated.addListener(function (tab) {
     getTabs();
 })
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    scope.lastError = msg;
+    return false;
+}

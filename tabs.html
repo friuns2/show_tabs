@@ -23,7 +23,7 @@
 
     <div id="container">
         <header>
-            <h1>Tabz <span style="font-size: .3em;">v0.1</span></h1>
+            <h1>Tabz <span style="font-size: .3em;">v0.1</span><span ng-show="lastError">Errors {{lastError}}</span></h1>
         </header>
 
 
@@ -66,19 +66,19 @@
                     <div ng-include="'windowsTemplate'" ng-hide="collapsed" ng-repeat="windows in [selectedFolder.windows]"></div>
                 </th>
                 <th width="300">
-                    <script type="text/ng-template" id="nodes_renderer1.html">
-                        <div ui-tree-handle class="tree-node tree-node-content"  ng-class="{selected:selectedFolder == node}" ng-click="selectFolder(node)">
-                            <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle2(this,node)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a> {{node.title}}
+                    <script type="text/ng-template" id="folderTemplate">
+                        <div ui-tree-handle class="tree-node tree-node-content"  ng-class="{selected:selectedFolder == node, drop: folderToDrop == node && dragging }" ng-mouseenter="folderToDrop = node" ng-mouseleave="folderToDrop=null" ng-click="selectFolder(node)">
+                            <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle2(this,node)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a> {{node.title}} ({{node.windows.length}})
                             <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
                             <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
                         </div>
                         <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-                            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+                            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'folderTemplate'"></li>
                         </ol>
                     </script>
-                    <div ui-tree="treeOptionsFolders" id="tree1-root">
+                    <div ui-tree="treeOptionsFolders" data-drag-delay="200" id="tree1-root">
                         <ol ui-tree-nodes="" ng-model="folders2">
-                            <li ng-repeat="node in folders2" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
+                            <li ng-repeat="node in folders2" ui-tree-node ng-include="'folderTemplate'"></li>
                         </ol>
                     </div>
 

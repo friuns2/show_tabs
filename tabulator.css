@@ -11,6 +11,9 @@ body {
 .selected{
 	background-color: #5bc0de;
 }
+.drop{
+	background-color: #23527c;
+}
 th{
 	font-weight: inherit;
 
