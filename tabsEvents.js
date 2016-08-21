@@ -8,12 +8,12 @@ chrome.tabs.onRemoved.addListener(function (tabid) {
         return a.id == tabid;
     });
 
-    var recentlyClosed = scope.folders.windows[scope.folders.windows.length - 1];
+    recentlyClosed = scope.folders.windows[scope.folders.windows.length - 1];
     if (!tab.url.startsWith("chrome-extension") && !skipSave && !recentlyClosed.tabs.contains(tab, function (a, b) {return a.url == b.url;})) {
 
         recentlyClosed.tabs.push(clone(tab));
         if(recentlyClosed.tabs.length>10)
-            recentlyClosed.tabs.slice(recentlyClosed.length-1,1);
+            recentlyClosed.tabs.splice(recentlyClosed.length-1,1);
         Save();
         skipSave = false;
     }

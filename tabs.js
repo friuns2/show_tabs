@@ -45,13 +45,12 @@ angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
             return tab.favIconUrl && tab.favIconUrl.startsWith("http") ? tab.favIconUrl : 'https://www.google.com/images/icons/product/ebooks-16.png';
         };
 
-        scope.CloseTab = function (tab) {
-            if (!tab.saved)
-                chrome.tabs.remove(tab.id);
+        scope.CloseTab = function (s) {
+
+            if (!s.$modelValue.saved)
+                chrome.tabs.remove(s.$modelValue.id);
             else {
-                scope.selectedFolder.windows.forEach(function (win) {
-                    Remove(win.tabs, tab);
-                })
+                s.remove();
                 Save();
             }
         };

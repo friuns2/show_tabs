@@ -50,7 +50,8 @@ treeOptions = {
         if (item.recentlyClosed)return;
 
         scope.selectedFolder.windows.forEach(function (a) {
-            a.tabs.savedTabs = true;
+            if(a.tabs)
+                a.tabs.savedTabs = true;
         })
         scope.windows.activeWindows = true;
         scope.selectedFolder.windows.saveWindows = true;
@@ -73,6 +74,6 @@ treeOptions = {
             }
         }
         Save();
-        return alist === blist;//|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
+        return alist === blist || alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
     }
 }

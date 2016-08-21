@@ -34,13 +34,18 @@
             <h1>Tabz <span style="font-size: .3em;">v0.1</span><span ng-show="lastError">Errors {{lastError}}</span>
             </h1>
         </header>
-
+        <script type="text/ng-template" id="tabTempalte2">
+            <div class="block-with-text" ui-tree-node>
+            <span class="delete-link" ng-click="CloseTab(this)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
+            {{tab.rand}}
+            <span class="link" ng-class="{'bold':tab.active}" ng-click="SelectTab(tab)">{{tab.title}}</span>
+            </div>
+        </script>
         <script type="text/ng-template" id="windowsTemplate">
             <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows">
                 <div class="group" ng-repeat="window in windows track by window.id">
-
-                    <div class="group-title" ui-tree-node>
-
+                    <div ng-include="'tabTempalte2'" ng-hide="window.tabs" ng-repeat="tab in [window]"></div>
+                    <div class="group-title" ui-tree-node ng-show="window.tabs">
                         <span class="delete-link" ng-click="CloseWindow(window)"></span>
                         <span class="group-amount">{{window.tabs.length}}</span>
 
@@ -52,10 +57,7 @@
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
                         <a ng-click="toggle2(this,window)" class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': window.collapsed, 'glyphicon-chevron-down': !window.collapsed}"></span></a>
                         <ul ui-tree-nodes="" ng-model="window.tabs" ng-hide="window.collapsed">
-                            <li ng-repeat="tab in window.tabs track by tab.id" ui-tree-node class="block-with-text">
-                                <span class="delete-link" ng-click="CloseTab(tab)"></span><img ng-src="{{GetIcon(tab)}}" height="16" width="16">
-                                {{tab.rand}}
-                                <span class="link" ng-class="{'bold':tab.active}" ng-click="SelectTab(tab)">{{tab.title}}</span>
+                            <li ng-repeat="tab in window.tabs track by tab.id"  ng-include="'tabTempalte2'">
 
                             </li>
                         </ul>
@@ -64,11 +66,11 @@
                 </div>
             </div>
         </script>
-        <div layout="row" >
-            <div flex="33">
+        <div layout="row">
+            <div flex="33" class="box">
                 <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
             </div>
-            <div style="width: 200px">
+            <div style="width: 200px" class="box">
                 <script type="text/ng-template" id="folderTemplate">
                     <div ui-tree-handle class="tree-node tree-node-content" ng-class="{selected:selectedFolder == node, drop: folderToDrop == node && dragging }" ng-mouseenter="setFolderToDrop(node)" ng-mouseleave="setFolderToDrop(null)" ng-click="selectFolder(node)">
                         <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle2(this,node)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
@@ -87,7 +89,7 @@
                     </ol>
                 </div>
             </div>
-            <div flex="33">
+            <div flex="33" class="box">
                 <div ng-include="'windowsTemplate'" ng-hide="collapsed || !selectedFolder.windows.length" ng-repeat="windows in [selectedFolder.windows]"></div>
             </div>
         </div>
