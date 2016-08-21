@@ -8,11 +8,13 @@ chrome.tabs.onRemoved.addListener(function (tabid) {
         return a.id == tabid;
     });
 
-    if (!tab.url.startsWith("chrome-extension") && !skipSave && !scope.folders.windows[0].tabs.contains(tab, function (a, b) {
-            return a.url == b.url;
-        })) {
-        scope.folders.windows[scope.folders.windows.length - 1].tabs.push(clone(tab));
-        storage.set({windows: scope.folders.windows});
+    var recentlyClosed = scope.folders.windows[scope.folders.windows.length - 1];
+    if (!tab.url.startsWith("chrome-extension") && !skipSave && !recentlyClosed.tabs.contains(tab, function (a, b) {return a.url == b.url;})) {
+
+        recentlyClosed.tabs.push(clone(tab));
+        if(recentlyClosed.tabs.length>10)
+            recentlyClosed.tabs.slice(recentlyClosed.length-1,1);
+        Save();
         skipSave = false;
     }
     //scope.closedWindows.push();

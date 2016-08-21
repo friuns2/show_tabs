@@ -4,23 +4,38 @@
 
 treeOptionsFolders =
 {
-
     accept: function (sourceNodeScope, destNodesScope, destIndex) {
 
-        return false;
+
+        return sourceNodeScope.$modelValue.nodes && destNodesScope.depth() > 0;
     }
 }
 
 treeOptions = {
     dragStart:function (e) {
+        event=e;
         scope.dragging = e.source.nodeScope.$modelValue;
     },
     dragStop:function (e) {
+
+        if(scope.folderToDrop)
+        {
+            if(!scope.dragging.saved) {
+                scope.selectFolder(scope.folderToDrop);
+                scope.SaveWindow(scope.dragging);
+            }
+            else {
+
+                Remove(e.source.nodesScope.$modelValue, scope.dragging);
+                scope.folderToDrop.windows.splice(0, 0, scope.dragging);
+            }
+            Save();
+            getTabs()
+        }
         scope.dragging = null;
     }
     ,
     accept: function (sourceNodeScope, destNodesScope, destIndex) {
-
             return true;
     },
     dropped: function (e) {
@@ -58,6 +73,6 @@ treeOptions = {
             }
         }
         Save();
-        return alist == blist;//|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
+        return alist === blist;//|| alist.savedTabs && blist.savedTabs || alist.savedWindows && blist.savedWindows;
     }
 }

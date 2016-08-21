@@ -1,15 +1,25 @@
 ﻿<html ng-app="my">
 <head>
-    <script src="Scripts/angular.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="Scripts/angular-material.min.css">
+
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/angular-animate.min.js"></script>
+    <script src="Scripts/angular-aria.min.js"></script>
+    <script src="Scripts/angular-messages.min.js"></script>
+    <script src="Scripts/angular-material.min.js"></script>
+
     <script src="tabs.js"></script>
-    <script src="tabsLocal.js" ></script>
-    <script src="tabsEvents.js" ></script>
-    <script src="tabsDragHandlers.js" ></script>
+    <script src="tabsLocal.js"></script>
+    <script src="tabsEvents.js"></script>
+    <script src="tabsDragHandlers.js"></script>
     <script src="Scripts/ext.js"></script>
     <script src="Scripts/linq.js"></script>
     <script src="Scripts/LINQ_JS.js"></script>
     <script src="Scripts/ui-tree/angular-ui-tree.js"></script>
-
+    <script src="Scripts/chrome-storage-largeSync.js"></script>
+    <script src="Scripts/lz-string.min.js"></script>
     <link rel="stylesheet" href="Scripts/ui-tree/angular-ui-tree.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="tabulator.css">
@@ -19,16 +29,14 @@
 <body>
 
 <div ng-controller="TodoCtrl">
-
-
     <div id="container">
         <header>
-            <h1>Tabz <span style="font-size: .3em;">v0.1</span><span ng-show="lastError">Errors {{lastError}}</span></h1>
+            <h1>Tabz <span style="font-size: .3em;">v0.1</span><span ng-show="lastError">Errors {{lastError}}</span>
+            </h1>
         </header>
 
-
         <script type="text/ng-template" id="windowsTemplate">
-            <div id="groups" ui-tree="treeOptions"  ui-tree-nodes="" ng-model="windows">
+            <div id="groups" ui-tree="treeOptions" ui-tree-nodes="" ng-model="windows">
                 <div class="group" ng-repeat="window in windows track by window.id">
 
                     <div class="group-title" ui-tree-node>
@@ -39,7 +47,7 @@
                         <span class="group-amount" ng-hide="edit" ng-dblclick="edit=true">{{window.name||'Tabs'}}</span>
                         <input ng-show="edit" ng-model="window.name" ng-blur="edit=false;Save()" autofocus/>
 
-                        <a ng-show="window.date"><span class="group-date">{{window.date}}</span>
+                        <a ng-show="window.saved"><!--<span class="group-date">{{window.date}}</span>-->
                             <span class="restore-all" ng-click="RestoreWindow(window)">Restore Window</span> </a>
                         <a ng-hide="window.date"><span class="restore-all" ng-click="SaveWindow(window)">Save Window</span></a>
                         <a ng-click="toggle2(this,window)" class="btn btn-success btn-xs" data-nodrag><span class="glyphicon" ng-class="{'glyphicon-chevron-right': window.collapsed, 'glyphicon-chevron-down': !window.collapsed}"></span></a>
@@ -56,38 +64,33 @@
                 </div>
             </div>
         </script>
-        <table class="table table-bordered ">
-
-            <tr>
-                <th>
-                    <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
-                </th>
-                <th >
-                    <div ng-include="'windowsTemplate'" ng-hide="collapsed" ng-repeat="windows in [selectedFolder.windows]"></div>
-                </th>
-                <th width="300">
-                    <script type="text/ng-template" id="folderTemplate">
-                        <div ui-tree-handle class="tree-node tree-node-content"  ng-class="{selected:selectedFolder == node, drop: folderToDrop == node && dragging }" ng-mouseenter="folderToDrop = node" ng-mouseleave="folderToDrop=null" ng-click="selectFolder(node)">
-                            <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle2(this,node)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a> {{node.title}} ({{node.windows.length}})
-                            <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-                            <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
-                        </div>
-                        <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-                            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'folderTemplate'"></li>
-                        </ol>
-                    </script>
-                    <div ui-tree="treeOptionsFolders" data-drag-delay="200" id="tree1-root">
-                        <ol ui-tree-nodes="" ng-model="folders2">
-                            <li ng-repeat="node in folders2" ui-tree-node ng-include="'folderTemplate'"></li>
-                        </ol>
+        <div layout="row" >
+            <div flex="33">
+                <div ng-include="'windowsTemplate'" ng-repeat="windows in [windows]"></div>
+            </div>
+            <div style="width: 200px">
+                <script type="text/ng-template" id="folderTemplate">
+                    <div ui-tree-handle class="tree-node tree-node-content" ng-class="{selected:selectedFolder == node, drop: folderToDrop == node && dragging }" ng-mouseenter="setFolderToDrop(node)" ng-mouseleave="setFolderToDrop(null)" ng-click="selectFolder(node)">
+                        <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle2(this,node)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+                        <span ng-hide="edit" ng-dblclick="edit=true">{{node.title||'new folder'}} ({{node.windows.length}})</span>
+                        <input ng-show="edit" ng-model="node.title" ng-blur="edit=false;Save()" autofocus/>
+                        <a ng-hide="node.windows.length" class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+                        <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
                     </div>
-
-
-                </th>
-            </tr>
-        </table>
-
-
+                    <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+                        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'folderTemplate'"></li>
+                    </ol>
+                </script>
+                <div ui-tree="treeOptionsFolders" data-drag-delay="200" id="tree1-root">
+                    <ol ui-tree-nodes="" ng-model="folders2">
+                        <li ng-repeat="node in folders2" ui-tree-node ng-include="'folderTemplate'"></li>
+                    </ol>
+                </div>
+            </div>
+            <div flex="33">
+                <div ng-include="'windowsTemplate'" ng-hide="collapsed || !selectedFolder.windows.length" ng-repeat="windows in [selectedFolder.windows]"></div>
+            </div>
+        </div>
     </div>
 </div>
 </body>

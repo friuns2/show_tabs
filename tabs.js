@@ -5,23 +5,23 @@ var timeout;
 var treeOptions;
 var treeOptionsFolders;
 
-angular.module('my', ['ui.tree']).controller('TodoCtrl',
+angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
 
         scope = $scope;
         timeout = $timeout;
-        storage = chrome.storage.local;
+        //storage = chrome.storage.local;
+        storage = chrome.storage.sync;
         scope.errorCount=0;
         getTabs();
-        scope.mouseEnter = function (e)
-        {
-            scope.folderToDrop = e;
-        }
         scope.treeOptions = treeOptions;
         scope.treeOptionsFolders = treeOptionsFolders;
+        scope.setFolderToDrop = function(f)
+        {
+            scope.folderToDrop=f;
+        }
         scope.selectFolder = function(node)
         {
-            console.log(node)
             scope.selectedFolder = node;
         }
         scope.toggle2 = function (scope, item) {
@@ -30,9 +30,6 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
             Save();
         };
 
-        scope.remove = function (scope) {
-            scope.remove();
-        };
 
 
         scope.newSubItem = function (scope) {
@@ -49,18 +46,19 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         };
 
         scope.CloseTab = function (tab) {
-            if (tab.id)
+            if (!tab.saved)
                 chrome.tabs.remove(tab.id);
-            else
+            else {
                 scope.selectedFolder.windows.forEach(function (win) {
                     Remove(win.tabs, tab);
-                    Save();
                 })
+                Save();
+            }
         };
 
         scope.SelectTab = function (tab) {
 
-            if (!tab.windowId) { //is saved
+            if (tab.saved) {
                 chrome.tabs.create({url: tab.url})
                 chrome.tabs.getCurrent(function (tab) {
                     chrome.tabs.update(tab.id, {selected: true});
@@ -73,7 +71,10 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
         }
 
         scope.CloseWindow = function (window) {
-            if (window.id)
+
+            if (window.recentlyClosed)
+                window.tabs = [];
+            else if (!window.saved)
                 chrome.windows.remove(window.id);
             else
                 RemoveWindow(window);
@@ -100,7 +101,6 @@ angular.module('my', ['ui.tree']).controller('TodoCtrl',
                         into.splice(pos++, 0, clone(tab))
                     else
                         win.tabs.push(clone(tab));
-
                 }
             });
             if (!into)

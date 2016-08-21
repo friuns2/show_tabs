@@ -6,5 +6,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jQuery 1.0." level="project" />
     <orderEntry type="library" name="angular.js" level="project" />
+    <orderEntry type="library" name="angular" level="application" />
+    <orderEntry type="library" name="angular-animate" level="application" />
+    <orderEntry type="library" name="angular-aria" level="application" />
+    <orderEntry type="library" name="angular-messages" level="application" />
+    <orderEntry type="library" name="angular-material" level="application" />
   </component>
 </module>

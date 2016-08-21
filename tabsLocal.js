@@ -16,12 +16,15 @@ function TabConstructor(tab) {
     return {favIconUrl: tab.favIconUrl,
         title: tab.title,
         url: tab.url,
-        id: random()};
+        id: random(),
+        saved:true
+    };
 }
 function WindowConstructor () {
     this.tabs = [];
     this.date = new Date().toISOString().slice(0, 20);
     this.id = random();
+    this.saved = true;
 }
 
 function getTabs() {
@@ -38,7 +41,7 @@ function getTabs() {
                         scope.selectedFolder = scope.folders;
 
                     if (!scope.folders.windows[0]) {
-                        scope.folders.windows[0] = {tabs: []};
+                        scope.folders.windows[0] = new WindowConstructor();
                         scope.folders.windows[0].recentlyClosed = true;
                         scope.folders.windows[0].name = "closed";
                     }
@@ -50,7 +53,7 @@ function getTabs() {
     }, 100);
 }
 
-function AddWindow(win, remove) {
+function AddWindow(win) {
     scope.selectedFolder.windows.splice(0, 0, win);
     Save();
     getTabs();

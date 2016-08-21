@@ -117,10 +117,11 @@ largeSync = (function(){
     });
   }
   function set(items, callback){
-    if(items === null || typeof items === 'string' || items.constructor.name === 'Array'){
-      // will throw error from "extensions::schemaUtils"
-      chromeSync.set(items, callback);
-    }else{
+    // if(items === null || typeof items === 'string' || items.constructor.name === 'Array'){
+    //   // will throw error from "extensions::schemaUtils"
+    //   chromeSync.set(items, callback);
+    // }else
+      {
       var splitItems = split(items, maxBytesPerKey);
       
       var splitKeys = getKeys(splitItems);
