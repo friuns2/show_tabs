@@ -13,9 +13,23 @@ angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
         //storage = chrome.storage.local;
         storage = chrome.storage.sync;
         scope.errorCount=0;
-        getTabs();
+
+        getTabsQuik();
         scope.treeOptions = treeOptions;
         scope.treeOptionsFolders = treeOptionsFolders;
+        scope.mergeAll = function () {
+            chrome.windows.getCurrent(function (current) {
+                chrome.windows.getAll({populate: true},function (windows) {
+                    windows.forEach(function (window) {
+                        var tabs = window.tabs.select(function (a) {return a.id;});
+                        if(window!=current)
+                            chrome.tabs.move(tabs, {windowId: current.id,index:-1})
+
+                    })
+                })
+            })
+            getTabs()
+        }
         scope.setFolderToDrop = function(f)
         {
             scope.folderToDrop=f;
@@ -84,7 +98,7 @@ angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
             var map = window.tabs.map(function (v) {
                 return v.url;
             })
-            chrome.windows.create({"url": map});
+            chrome.windows.create({"url": map,"focused": false});
             RemoveWindow(window);
         }
 
@@ -93,7 +107,7 @@ angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
                 var win = new WindowConstructor();
 
             window.tabs.forEach(function (tab) {
-                if (!tab.url.startsWith("chrome-extension")) {
+                if (tab.url != "chrome://newtab/") {
                     skipSave = true;
                     chrome.tabs.remove(tab.id);
                     if (into)

@@ -5,3 +5,7 @@
 
     });
 });
+
+chrome.tabs.onUpdated.addListener(function (tab) {
+    getTabs();
+})

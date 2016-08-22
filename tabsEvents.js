@@ -1,6 +1,12 @@
 /**
  * Created by Tuomas pc on 19.8.2016.
  */
+
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    scope.lastError = msg;
+    return false;
+}
 chrome.tabs.onRemoved.addListener(function (tabid) {
     var tab = Enumerable.From(scope.windows).SelectMany(function (a) {
         return a.tabs;
@@ -9,7 +15,7 @@ chrome.tabs.onRemoved.addListener(function (tabid) {
     });
 
     recentlyClosed = scope.folders.windows[scope.folders.windows.length - 1];
-    if (!tab.url.startsWith("chrome-extension") && !skipSave && !recentlyClosed.tabs.contains(tab, function (a, b) {return a.url == b.url;})) {
+    if (!tab.url != "chrome://newtab/" && !skipSave && !recentlyClosed.tabs.contains(tab, function (a, b) {return a.url == b.url;})) {
 
         recentlyClosed.tabs.push(clone(tab));
         if(recentlyClosed.tabs.length>10)
@@ -20,11 +26,3 @@ chrome.tabs.onRemoved.addListener(function (tabid) {
     //scope.closedWindows.push();
     getTabs();
 })
-chrome.tabs.onUpdated.addListener(function (tab) {
-    getTabs();
-})
-
-window.onerror = function (msg, url, lineNo, columnNo, error) {
-    scope.lastError = msg;
-    return false;
-}

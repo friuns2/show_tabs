@@ -32,6 +32,7 @@
     <div id="container">
         <header>
             <h1>Tabz <span style="font-size: .3em;">v0.1</span><span ng-show="lastError">Errors {{lastError}}</span>
+                <md-button ng-click="mergeAll()"> Merge All</md-button>
             </h1>
         </header>
         <script type="text/ng-template" id="tabTempalte2">
@@ -48,8 +49,7 @@
                     <div class="group-title" ui-tree-node ng-show="window.tabs">
                         <span class="delete-link" ng-click="CloseWindow(window)"></span>
                         <span class="group-amount">{{window.tabs.length}}</span>
-
-                        <span class="group-amount" ng-hide="edit" ng-dblclick="edit=true">{{window.name||'Tabs'}}</span>
+                        <span class="group-amount" ng-class="{'bold':window.focused}"  ng-hide="edit" ng-dblclick="edit=true">{{window.name||'Tabs'}}</span>
                         <input ng-show="edit" ng-model="window.name" ng-blur="edit=false;Save()" autofocus/>
 
                         <a ng-show="window.saved"><!--<span class="group-date">{{window.date}}</span>-->
