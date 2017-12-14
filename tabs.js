@@ -4,7 +4,7 @@ var scope;
 var timeout;
 var treeOptions;
 var treeOptionsFolders;
-
+var bg;
 angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
     function ($scope, $timeout, $filter) {
 
@@ -13,6 +13,10 @@ angular.module('my', ['ui.tree','ngMaterial']).controller('TodoCtrl',
         //storage = chrome.storage.local;
         storage = chrome.storage.sync;
         scope.errorCount=0;
+        bg = chrome.extension.getBackgroundPage();
+        chrome.tabs.getCurrent(function (e) {
+            chrome.tabs.move(e.id,{index:bg.lastTab.index});
+        })
 
         getTabsQuik();
         scope.treeOptions = treeOptions;

@@ -7,6 +7,12 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
     scope.lastError = msg;
     return false;
 }
+
+chrome.tabs.onUpdated.addListener(function (tab) {
+
+    getTabs();
+})
+
 chrome.tabs.onRemoved.addListener(function (tabid) {
     var tab = Enumerable.From(scope.windows).SelectMany(function (a) {
         return a.tabs;

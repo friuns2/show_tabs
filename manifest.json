@@ -11,7 +11,7 @@
   ],
   "background": {
     "scripts": ["events.js"],
-    "persistent": true
+    "persistent": false
   },
   "chrome_url_overrides" : {
     "newtab": "tabs.html"

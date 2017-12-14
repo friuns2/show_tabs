@@ -6,7 +6,7 @@ function clone(tab) {
 }
 
 function random() {
-    return Math.floor((Math.random() * 1000) + 1);
+    return Math.floor((Math.random() * 10000) + 1);
 }
 var promise;
 
